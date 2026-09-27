@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Flower Battle</title>
+
+
+<style>
+
+        /* =====================================================
+           GLOBAL
+           ===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f4f1ea;
+            color: #222;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+
+        /* =====================================================
+           APP
+           ===================================================== */
+
+        #app {
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* =====================================================
+           TOP BAR
+           ===================================================== */
+
+        #topbar {
+            height: 70px;
+
+            padding: 0 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: #252525;
+            color: white;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        #logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            padding: 7px 13px;
+
+            border-radius: 999px;
+
+            background: #444;
+
+            color: white;
+
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           BATTLE LAYOUT
+           ===================================================== */
+
+        #battle {
+            flex: 1;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(280px, 1fr)
+                330px
+                minmax(280px, 1fr);
+
+            gap: 18px;
+
+            padding: 18px;
+        }
+
+
+        /* =====================================================
+           PLAYER PANELS
+           ===================================================== */
+
+        .player-panel {
+            min-width: 0;
+
+            padding: 18px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 10px;
+        }
+
+        .player-header h2 {
+            margin: 0;
+
+            font-size: 22px;
+        }
+
+
+        /* =====================================================
+           ACTIVE / RESERVE TOGGLE
+           ===================================================== */
+
+        .bouquet-toggle {
+            display: flex;
+
+            gap: 6px;
+
+            margin: 10px 0 14px;
+        }
+
+        .toggle-button {
+            flex: 1;
+
+            padding: 8px 12px;
+
+            border: 1px solid #bbb;
+            border-radius: 8px;
+
+            background: #eee;
+            color: #333;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            transition:
+                background 0.15s,
+                color 0.15s,
+                transform 0.1s;
+        }
+
+        .toggle-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .toggle-button.selected {
+            background: #333;
+            color: white;
+
+            border-color: #333;
+        }
+
+        .toggle-button:disabled {
+            opacity: 0.45;
+
+            cursor: not-allowed;
+        }
+
+
+        /* =====================================================
+           BOUQUET
+           ===================================================== */
+
+        .visible-bouquet {
+            min-height: 300px;
+        }
+
+        .bouquet-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 10px;
+
+            font-weight: bold;
+        }
+
+        .bouquet-total-sp {
+            margin-left: auto;
+
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .bouquet-badge {
+            padding: 4px 8px;
+
+            border-radius: 6px;
+
+            background: #333;
+            color: white;
+
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .bouquet-badge.inactive {
+            background: #999;
+        }
+
+        .flowers {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 10px;
+        }
+
+
+        /* =====================================================
+           FLOWER CARDS
+           ===================================================== */
+
+        .flower-card {
+            position: relative;
+
+            min-height: 125px;
+
+            padding: 10px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            background: #fafafa;
+
+            border: 1px solid #ddd;
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            transition:
+                transform 0.12s,
+                box-shadow 0.12s,
+                border-color 0.12s;
+        }
+
+        .flower-card img {
+            width: 58px;
+            height: 58px;
+
+            object-fit: contain;
+
+            margin-bottom: 5px;
+        }
+
+        .flower-emoji {
+            display: none;
+
+            width: 58px;
+            height: 58px;
+
+            margin-bottom: 5px;
+
+            font-size: 46px;
+            line-height: 58px;
+        }
+
+        .flower-name {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .flower-points {
+            margin-top: 3px;
+
+            color: #666;
+
+            font-size: 12px;
+        }
+
+        .flower-statuses {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+
+            gap: 3px;
+
+            margin-top: 5px;
+        }
+
+        .flower-statuses span {
+            padding: 2px 5px;
+
+            border-radius: 4px;
+
+            background: #ead7d7;
+
+            font-size: 10px;
+        }
+
+        .flower-card.selectable {
+            cursor: pointer;
+
+            border-color: #555;
+
+            box-shadow:
+                0 0 0 2px rgba(0, 0, 0, 0.08);
+        }
+
+        .flower-card.selectable:hover {
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 6px 16px rgba(0, 0, 0, 0.22);
+        }
+
+
+        /* =====================================================
+           FLOWER ACTIVATION FLASH
+           ===================================================== */
+
+        .flower-card.flower-active {
+            animation: flowerActivate 0.45s ease-out;
+        }
+
+        .flower-card.flower-active::after {
+            content: "";
+
+            position: absolute;
+            inset: 0;
+
+            background: var(--flower-flash-color);
+
+            pointer-events: none;
+
+            animation: flowerTint 0.45s ease-out;
+        }
+
+        @keyframes flowerActivate {
+
+            0% {
+                transform: scale(1);
+
+                filter:
+                    brightness(1)
+                    saturate(1);
+            }
+
+            25% {
+                transform: scale(1.08);
+
+                filter:
+                    brightness(1.7)
+                    saturate(1.4);
+            }
+
+            100% {
+                transform: scale(1);
+
+                filter:
+                    brightness(1)
+                    saturate(1);
+            }
+        }
+
+        @keyframes flowerTint {
+
+            0% {
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+
+        /* =====================================================
+           CENTER
+           ===================================================== */
+
+        #center {
+            min-width: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 12px;
+        }
+
+        #turnBox {
+            padding: 18px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            text-align: center;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        #turnBox h2 {
+            margin: 0 0 8px;
+        }
+
+        #turnNumber {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        #timeRemaining {
+            margin-top: 6px;
+
+            color: #666;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           WEATHER
+           ===================================================== */
+
+        #weatherBox {
+            padding: 16px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            text-align: center;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        #weatherIcon {
+            font-size: 42px;
+        }
+
+        #weatherName {
+            margin-top: 4px;
+
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #weatherValue {
+            margin-top: 4px;
+
+            color: #666;
+        }
+
+
+        /* =====================================================
+           LOG
+           ===================================================== */
+
+        #log {
+            flex: 1;
+
+            min-height: 250px;
+            max-height: 450px;
+
+            padding: 12px;
+
+            overflow-y: auto;
+
+            background: #1d1d1d;
+            color: #eee;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.2);
+
+            font-family:
+                Consolas,
+                "Courier New",
+                monospace;
+
+            font-size: 12px;
+        }
+
+        .log-line {
+            margin-bottom: 5px;
+        }
+
+
+        /* =====================================================
+           CONTROLS
+           ===================================================== */
+
+        #controls {
+            min-height: 80px;
+
+            padding: 14px 20px;
+
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+
+            gap: 10px;
+
+            background: white;
+
+            border-top: 1px solid #ddd;
+
+            box-shadow:
+                0 -2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .control-title {
+            width: 100%;
+
+            margin-bottom: 3px;
+
+            text-align: center;
+
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .action {
+            padding: 10px 18px;
+
+            border: none;
+            border-radius: 9px;
+
+            background: #444;
+            color: white;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            transition:
+                transform 0.1s,
+                opacity 0.1s;
+        }
+
+        .action:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .action.primary {
+            background: #222;
+        }
+
+        .action.secondary {
+            background: #777;
+        }
+
+        .action:disabled {
+            opacity: 0.45;
+
+            cursor: not-allowed;
+        }
+
+
+        /* =====================================================
+           SETUP OVERLAY
+           ===================================================== */
+
+        #setup {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 100;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(0, 0, 0, 0.7);
+        }
+
+        #setupContent {
+            width: min(720px, 100%);
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            padding: 28px;
+
+            background: white;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 15px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        #setupContent h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+
+            text-align: center;
+        }
+
+        .setup-subtitle {
+            margin-bottom: 18px;
+
+            color: #666;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           FLOWER SELECTION POOL
+           ===================================================== */
+
+        #pool {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+        .pool-flower {
+            width: 100%;
+            height: 90px;
+
+            padding: 8px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--flower-color);
+            border-radius: 10px;
+
+            background: color-mix(
+                in srgb,
+                var(--flower-color) 8%,
+                #f7f7f7
+            );
+
+            cursor: pointer;
+
+            transition:
+                background 0.12s,
+                transform 0.12s,
+                border-color 0.12s,
+                box-shadow 0.12s;
+        }
+
+        .pool-flower:hover {
+            background: color-mix(
+                in srgb,
+                var(--flower-color) 18%,
+                #f7f7f7
+            );
+
+            border-color:
+                var(--flower-color);
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 4px 12px
+                color-mix(
+                    in srgb,
+                    var(--flower-color) 25%,
+                    transparent
+                );
+        }
+
+        .pool-flower-sprite {
+            width: 64px;
+            height: 64px;
+
+            object-fit: contain;
+        }
+
+        .pool-flower-emoji {
+            font-size: 48px;
+            line-height: 1;
+        }
+
+
+        /* =====================================================
+           SELECTED FLOWERS
+           ===================================================== */
+
+        #selected {
+            margin-bottom: 12px;
+        }
+
+        .selection-list {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 7px;
+
+            margin-bottom: 8px;
+        }
+
+        .choice {
+            padding: 7px 10px;
+
+            border: 1px solid #ccc;
+            border-radius: 7px;
+
+            background: #eee;
+
+            color: #333;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            transition:
+                background 0.12s,
+                border-color 0.12s;
+        }
+
+        .choice:hover {
+            background: #e4e4e4;
+
+            border-color: #888;
+        }
+
+        #setupMessage {
+            min-height: 20px;
+
+            margin-bottom: 12px;
+
+            color: #666;
+
+            font-size: 13px;
+        }
+
+        #setupContent > .action {
+            display: block;
+
+            margin: 0 auto;
+        }
+
+
+        /* =====================================================
+           CUSTOM FLOWER TOOLTIP
+           ===================================================== */
+
+        .flower-tooltip {
+            position: fixed;
+
+            display: none;
+
+            max-width: 260px;
+
+            padding: 10px 13px;
+
+            background:
+                color-mix(
+                    in srgb,
+                    var(--flower-color) 25%,
+                    #141419
+                );
+
+            border:
+                1px solid
+                var(--flower-color);
+
+            border-radius: 8px;
+
+            box-shadow:
+                0 6px 20px
+                rgba(0, 0, 0, 0.35),
+
+                0 0 12px
+                color-mix(
+                    in srgb,
+                    var(--flower-color) 35%,
+                    transparent
+                );
+
+            color: white;
+
+            pointer-events: none;
+
+            z-index: 1000;
+
+            font-size: 14px;
+        }
+
+        .flower-tooltip.visible {
+            display: block;
+        }
+
+        .tooltip-name {
+            font-size: 16px;
+            font-weight: bold;
+
+            margin-bottom: 3px;
+        }
+
+        .tooltip-bsp {
+            font-size: 12px;
+
+            opacity: 0.7;
+
+            margin-bottom: 7px;
+        }
+
+        .tooltip-description {
+            line-height: 1.35;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            #battle {
+                grid-template-columns: 1fr;
+            }
+
+            #center {
+                order: -1;
+            }
+
+            #log {
+                max-height: 250px;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            #topbar {
+                padding: 0 12px;
+            }
+
+            #logo {
+                font-size: 21px;
+            }
+
+            #battle {
+                padding: 10px;
+            }
+
+            #pool {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .flowers {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
+</style>
+
+</head>
+
+
+<body>
+
+<div id="app">
+
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
+    <header id="topbar">
+
+        <div id="logo">
+            🌺 Flower Battle
+        </div>
+
+        <div id="topbar-right">
+
+            <div
+                id="timeBadge"
+                class="badge"
+            >
+                DAY
+            </div>
+
+            <div
+                id="weatherBadge"
+                class="badge"
+            >
+                Weather
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         BATTLE
+         ===================================================== -->
+
+    <main id="battle">
+
+        <section
+            id="player0Panel"
+            class="player-panel"
+        ></section>
+
+
+        <section id="center">
+
+            <div id="turnBox">
+
+                <h2>Turn</h2>
+
+                <div id="turnNumber">
+                    0
+                </div>
+
+                <div id="timeRemaining">
+                    6 turns
+                </div>
+
+            </div>
+
+
+            <div id="weatherBox">
+
+                <div id="weatherIcon">
+                    🌤️
+                </div>
+
+                <div id="weatherName">
+                    Clear
+                </div>
+
+                <div id="weatherValue">
+                    0
+                </div>
+
+            </div>
+
+
+            <div id="log"></div>
+
+        </section>
+
+
+        <section
+            id="player1Panel"
+            class="player-panel"
+        ></section>
+
+    </main>
+
+
+    <!-- =====================================================
+         CONTROLS
+         ===================================================== -->
+
+    <div id="controls"></div>
+
+
+    <!-- =====================================================
+         SETUP
+         ===================================================== -->
+
+    <div
+        id="setup"
+        class="hidden"
+    >
+
+        <div id="setupContent"></div>
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================================
+     CUSTOM FLOWER TOOLTIP
+     ========================================================= -->
+
+<div
+    id="flower-tooltip"
+    class="flower-tooltip"
+>
+
+    <div class="tooltip-name"></div>
+
+    <div class="tooltip-bsp"></div>
+
+    <div class="tooltip-description"></div>
+
+</div>
+
+
+<script
+    type="module"
+    src="./js/main.js"
+></script>
+
+
+</body>
+
+</html>
