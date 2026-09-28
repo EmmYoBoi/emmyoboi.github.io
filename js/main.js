@@ -11,7 +11,7 @@ import {
 
 import { print } from "./ui/logger.js";
 
-import { renderGame } from "./ui/renderer.js";
+import { renderGame, setGameTargetSP } from "./ui/renderer.js";
 
 
 let game = null;
@@ -37,6 +37,9 @@ async function startGame() {
 
     const targetStylePoints =
         gameSetup.targetStylePoints;
+
+    // Pass the target SP to the renderer
+    setGameTargetSP(targetStylePoints);
 
 
     const player1 =
