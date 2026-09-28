@@ -440,56 +440,62 @@ export class Game {
     }
 
 
-    async processStatuses() {
+    async processStatusesWithPriority(priorityPhase) {
+        /*
+            priorityPhase can be:
+            - "pre": negative priorities (before reset)
+            - "reset": priority 0 (turnPoints and specialChances reset)
+            - "post": positive priorities (after reset)
+        */
 
         for (
             const group of
             this.getAllActiveFlowerGroups()
         ) {
 
-            await group.flower.processStatuses(
-                this
+            const flower = group.flower;
+
+            // Filter statuses based on priority phase
+            const statusesToProcess = flower.statuses.filter(status => {
+                if (priorityPhase === "pre") {
+                    return status.priority < 0;
+                } else if (priorityPhase === "reset") {
+                    return status.priority === 0;
+                } else if (priorityPhase === "post") {
+                    return status.priority > 0;
+                }
+                return false;
+            });
+
+            // Sort by priority within this phase
+            statusesToProcess.sort((a, b) => a.priority - b.priority);
+
+            const expiredStatuses = [];
+
+            for (const status of statusesToProcess) {
+                await status.trigger(flower, this);
+
+                if (status.isExpired()) {
+                    expiredStatuses.push(status);
+                }
+            }
+
+            // Handle expired status cooldowns
+            for (const status of expiredStatuses) {
+                if (status.exhaustionDuration > 0) {
+                    flower.addStatusCooldown(
+                        status.type,
+                        status.sourceFlowerId,
+                        status.exhaustionDuration + 1
+                    );
+                }
+            }
+
+            // Remove expired statuses
+            flower.statuses = flower.statuses.filter(
+                status => !status.isExpired()
             );
         }
-
-
-        await this.waitForEvents();
-    }
-
-
-    async scoreFlowers() {
-
-        for (
-            const player of
-            this.players
-        ) {
-
-            await player.activeBouquet
-                .collectFlowerPoints();
-
-            player.activeBouquet
-                .collectStylePoints();
-        }
-
-        this.updateDisplay();
-
-        await this.waitForEvents();
-
-        this.log("========== POINTS SCORED! ==========");
-}
-
-
-    async processEndOfTurnCooldowns() {
-
-        for (
-            const group of
-            this.getAllActiveFlowerGroups()
-        ) {
-
-            group.flower
-                .processEndOfTurnCooldowns();
-        }
-
 
         await this.waitForEvents();
     }
@@ -514,11 +520,18 @@ export class Game {
 
         this.advanceTime();
 
+        // Process statuses with negative priorities (before reset)
+        await this.processStatusesWithPriority("pre");
+
+        // Reset turnPoints and specialChances (priority 0)
         this.resetSpecialChances();
-
-        await this.processStatuses();
-
         this.resetTurnPoints();
+
+        // Process statuses with priority 0
+        await this.processStatusesWithPriority("reset");
+
+        // Process statuses with positive priorities (after reset)
+        await this.processStatusesWithPriority("post");
 
         this.updateDisplay();
     }
