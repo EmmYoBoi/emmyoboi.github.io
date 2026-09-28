@@ -4,13 +4,15 @@ export class Status {
         sourceFlowerId,
         duration,
         effectFunction,
-        exhaustionDuration = 0
+        exhaustionDuration = 0,
+        priority = 0
     ) {
         this.type = type;
         this.sourceFlowerId = sourceFlowerId;
         this.duration = duration;
         this.effectFunction = effectFunction;
         this.exhaustionDuration = exhaustionDuration;
+        this.priority = priority;
     }
 
     async trigger(flower, game) {
