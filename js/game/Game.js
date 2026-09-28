@@ -500,6 +500,27 @@ export class Game {
         await this.waitForEvents();
     }
 
+    async scoreFlowers() {
+
+        for (
+            const player of
+            this.players
+        ) {
+
+            await player.activeBouquet
+                .collectFlowerPoints();
+
+            player.activeBouquet
+                .collectStylePoints();
+        }
+
+        this.updateDisplay();
+
+        await this.waitForEvents();
+
+        this.log("========== POINTS SCORED! ==========");
+    }
+
 
     async beginTurn() {
 
