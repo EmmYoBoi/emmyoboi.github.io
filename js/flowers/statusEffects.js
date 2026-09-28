@@ -5,7 +5,7 @@ export function ToxicStatus(sourceFlowerId, duration = 3) {
         "toxic",
         sourceFlowerId,
         duration,
-        (flower) => {
+        (flower, game) => {
             flower.baseStylePoints = Math.max(
                 0,
                 flower.baseStylePoints - 4
