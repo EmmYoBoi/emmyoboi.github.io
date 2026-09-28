@@ -142,7 +142,12 @@ export class Flower {
     async processStatuses(game) {
         const expiredStatuses = [];
 
-        for (const status of this.statuses) {
+        // Sort statuses by priority (ascending, so lower priorities execute first)
+        const sortedStatuses = [...this.statuses].sort(
+            (a, b) => a.priority - b.priority
+        );
+
+        for (const status of sortedStatuses) {
             await status.trigger(this, game);
 
             if (status.isExpired()) {
