@@ -327,7 +327,7 @@ export class Game {
     }
 
 
-    resetTurn() {
+    resetTurnPoints() {
 
         for (
             const player of
@@ -336,6 +336,15 @@ export class Game {
 
             player.activeBouquet
                 .resetTurnPoints();
+        }
+    }
+
+    resetSpecialChances() {
+
+        for (
+            const player of
+            this.players
+        ) {
 
             player.activeBouquet
                 .resetSpecialChances();
@@ -505,9 +514,11 @@ export class Game {
 
         this.advanceTime();
 
-        this.resetTurn();
+        this.resetSpecialChances();
 
         await this.processStatuses();
+
+        this.resetTurnPoints();
 
         this.updateDisplay();
     }
