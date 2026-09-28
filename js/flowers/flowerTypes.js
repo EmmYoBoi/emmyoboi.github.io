@@ -288,33 +288,46 @@ export function NightExtender() {
                 flower,
                 game
             ) => {
-
                 if (
-                    game.time !== "night" ||
+                    game.time !== "night" &&
                     flower.usedThisNight
                 ) {
-
+                    flower.usedThisNight = false;
                     return;
-
                 }
-
-
-                game.timeRemaining +=
+                else if (
+                    game.time == "night" &&
+                    flower.usedThisNight        
+                ) {
+                    return;
+                }
+                else if (
+                    game.time !== "night" &&
+                    !flower.usedThisNight
+                ) {
+                    return;
+                }
+                else if (
+                    game.time == "night" &&
+                    !flower.usedThisNight        
+                ) {
+                    game.timeRemaining +=
                     3;
 
 
-                flower.usedThisNight =
-                    true;
-
-
-                await flower.flash();
-
-                await game.log(
-                    `${flower.name} extends the night! ` +
-                    `Night duration increased to ` +
-                    `${game.timeRemaining} turns remaining.`
-                );
-
+                    flower.usedThisNight =
+                        true;
+    
+    
+                    await flower.flash();
+    
+                    await game.log(
+                        `${flower.name} extends the night! ` +
+                        `Night duration increased to ` +
+                        `${game.timeRemaining} turns remaining.`
+                    );
+                    return;
+                }
             },
 
             1
