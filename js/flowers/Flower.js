@@ -139,11 +139,22 @@ export class Flower {
         return true;
     }
 
-    async processStatuses(game) {
+    async processStatuses(game, priorityPhase) {
+        // Filter statuses based on priority phase
+        const statusesToProcess = this.statuses.filter(status => {
+            if (priorityPhase === "pre") {
+                return status.priority < 0;
+            } else if (priorityPhase === "reset") {
+                return status.priority === 0;
+            } else if (priorityPhase === "post") {
+                return status.priority > 0;
+            }
+            return false;
+        });
         const expiredStatuses = [];
 
         // Sort statuses by priority (ascending, so lower priorities execute first)
-        const sortedStatuses = [...this.statuses].sort(
+        const sortedStatuses = [...statusesToProcess].sort(
             (a, b) => a.priority - b.priority
         );
 
