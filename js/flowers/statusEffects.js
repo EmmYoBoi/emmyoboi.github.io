@@ -5,7 +5,7 @@ export function ToxicStatus(sourceFlowerId, duration = 3) {
         "toxic",
         sourceFlowerId,
         duration,
-        (flower, game) => {
+        async (flower, game) => {
             flower.baseStylePoints = Math.max(
                 0,
                 flower.baseStylePoints - 4
@@ -22,7 +22,7 @@ export function PoisonStatus(sourceFlowerId, duration = 5) {
         "poison",
         sourceFlowerId,
         duration,
-        (flower, game) => {
+        async (flower, game) => {
             flower.baseStylePoints = Math.max(
                 0,
                 flower.baseStylePoints - 2
@@ -39,7 +39,7 @@ export function StunStatus(sourceFlowerId, duration = 3) {
         "stun",
         sourceFlowerId,
         duration,
-        (flower, game) => {
+        async (flower, game) => {
             flower.specialChance = 0;
             await game.log(`${flower.name} #${flower.flowerId} is stunned; it won't apply its special effect!`);
         },
