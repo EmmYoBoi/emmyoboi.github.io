@@ -25,11 +25,18 @@ async function startGame() {
 
 
     /*
-        Set up both players.
+        Set up both players and get
+        the target style points.
     */
 
-    const players =
+    const gameSetup =
         await setupGame();
+
+    const players =
+        gameSetup.players;
+
+    const targetStylePoints =
+        gameSetup.targetStylePoints;
 
 
     const player1 =
@@ -49,11 +56,12 @@ async function startGame() {
 
 
     /*
-        Create game.
+        Create game with the selected
+        target style points.
     */
 
     game = new Game(
-        1000,
+        targetStylePoints,
 
         message => {
             print(message);
