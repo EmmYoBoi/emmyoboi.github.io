@@ -2,6 +2,7 @@ import { flowerMetadata } from "../flowers/flowerTypes.js";
 
 
 let viewingBouquet = new Map();
+let gameTargetSP = 1000;
 
 
 /*
@@ -67,6 +68,13 @@ export function setPlayerView(
         playerIndex,
         view
     );
+
+}
+
+
+export function setGameTargetSP(target) {
+
+    gameTargetSP = target;
 
 }
 
@@ -433,29 +441,6 @@ function renderBouquet(
 
 
     /*
-        Total accumulated Style Points
-    */
-
-    const totalPoints =
-        document.createElement(
-            "span"
-        );
-
-
-    totalPoints.className =
-        "bouquet-total-sp";
-
-
-    totalPoints.textContent =
-        `${bouquet.stylePoints} SP`;
-
-
-    heading.appendChild(
-        totalPoints
-    );
-
-
-    /*
         Active / Reserve badge
     */
 
@@ -484,6 +469,85 @@ function renderBouquet(
 
     container.appendChild(
         heading
+    );
+
+
+    /*
+        Progress bar for Style Points
+    */
+
+    const progressContainer =
+        document.createElement(
+            "div"
+        );
+
+
+    progressContainer.className =
+        "sp-progress-container";
+
+
+    const progressBar =
+        document.createElement(
+            "div"
+        );
+
+
+    progressBar.className =
+        "sp-progress-bar";
+
+
+    const progressFill =
+        document.createElement(
+            "div"
+        );
+
+
+    progressFill.className =
+        "sp-progress-fill";
+
+
+    const percentage =
+        Math.min(
+            (bouquet.stylePoints / gameTargetSP) * 100,
+            100
+        );
+
+
+    progressFill.style.width =
+        `${percentage}%`;
+
+
+    progressBar.appendChild(
+        progressFill
+    );
+
+
+    const progressText =
+        document.createElement(
+            "span"
+        );
+
+
+    progressText.className =
+        "sp-progress-text";
+
+
+    progressText.textContent =
+        `${bouquet.stylePoints} / ${gameTargetSP} SP`;
+
+
+    progressBar.appendChild(
+        progressText
+    );
+
+
+    progressContainer.appendChild(
+        progressBar
+    );
+
+
+    container.appendChild(
+        progressContainer
     );
 
 
