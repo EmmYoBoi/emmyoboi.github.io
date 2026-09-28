@@ -277,55 +277,7 @@ export class Game {
 
         this.timeRemaining =
             5;
-
-
-        this.resetNightExtenders();
     }
-
-
-    resetNightExtenders() {
-
-        if (
-            this.time !== "night"
-        ) {
-
-            return;
-        }
-
-
-        for (
-            const player of
-            this.players
-        ) {
-
-            for (
-                const bouquet of [
-
-                    player.activeBouquet,
-
-                    player.reserveBouquet
-
-                ]
-            ) {
-
-                for (
-                    const flower of
-                    bouquet.flowers
-                ) {
-
-                    if (
-                        flower.name ===
-                        "NightExtender"
-                    ) {
-
-                        flower.usedThisNight =
-                            false;
-                    }
-                }
-            }
-        }
-    }
-
 
     resetTurnPoints() {
 
