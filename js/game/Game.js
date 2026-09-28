@@ -616,21 +616,37 @@ export class Game {
     checkVictory() {
 
         for (
-            const player of
-            this.players
+            let i = 0; i < this.players.length; i++
         ) {
 
             if (
-                player.activeBouquet.stylePoints >=
+                this.players[i].activeBouquet.stylePoints >=
                 this.targetStylePoints
             ) {
-
-                this.log(
-                    `🏆 ${player.name} WINS!`
-                );
-
-
-                return player;
+                if (this.players[i+1%this.players.length].activeBouquet.stylePoints < this.players[i].activeBouquet.stylePoints) {
+                    await this.log(
+                        `🏆 ${this.players[i].name} WINS!`
+                    );
+    
+    
+                    return this.players[i];
+                }
+                else if (this.players[i+1%this.players.length].activeBouquet.stylePoints > this.players[i].activeBouquet.stylePoint) {
+                    await this.log(
+                        `🏆 ${this.players[i+1%this.players.length].name} WINS!`
+                    );
+    
+    
+                    return this.players[i+1%this.players.length];
+                }
+                else {
+                    await this.log(
+                        `🏆 IT IS A TIE!`
+                    );
+    
+    
+                    return this.players[i];
+                }
             }
         }
 
