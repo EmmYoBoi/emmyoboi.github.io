@@ -521,6 +521,20 @@ export class Game {
         this.log("========== POINTS SCORED! ==========");
     }
 
+    async processEndOfTurnCooldowns() {
+
+        for (
+            const group of
+            this.getAllActiveFlowerGroups()
+        ) {
+
+            group.flower
+                .processEndOfTurnCooldowns();
+        }
+
+
+        await this.waitForEvents();
+    } //Copilot, my guy, why did you remove this????
 
     async beginTurn() {
 
