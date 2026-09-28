@@ -575,7 +575,7 @@ export class Game {
                 this.players[i].activeBouquet.stylePoints >=
                 this.targetStylePoints
             ) {
-                if (this.players[i+1%this.players.length].activeBouquet.stylePoints < this.players[i].activeBouquet.stylePoints) {
+                if (this.players[(i+1)%this.players.length].activeBouquet.stylePoints < this.players[i].activeBouquet.stylePoints) {
                     await this.log(
                         `🏆 ${this.players[i].name} WINS!`
                     );
@@ -583,13 +583,13 @@ export class Game {
     
                     return this.players[i];
                 }
-                else if (this.players[i+1%this.players.length].activeBouquet.stylePoints > this.players[i].activeBouquet.stylePoint) {
+                else if (this.players[(i+1)%this.players.length].activeBouquet.stylePoints > this.players[i].activeBouquet.stylePoint) {
                     await this.log(
-                        `🏆 ${this.players[i+1%this.players.length].name} WINS!`
+                        `🏆 ${this.players[(i+1)%this.players.length].name} WINS!`
                     );
     
     
-                    return this.players[i+1%this.players.length];
+                    return this.players[(i+1)%this.players.length];
                 }
                 else {
                     await this.log(
