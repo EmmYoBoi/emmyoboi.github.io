@@ -529,7 +529,7 @@ export class Game {
 
 
         const winner =
-            this.checkVictory();
+            await this.checkVictory();
 
 
         if (
@@ -565,7 +565,7 @@ export class Game {
     }
 
 
-    checkVictory() {
+    async checkVictory() {
 
         for (
             let i = 0; i < this.players.length; i++
