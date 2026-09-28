@@ -11,7 +11,8 @@ export function ToxicStatus(sourceFlowerId, duration = 3) {
                 flower.baseStylePoints - 4
             );
         },
-        2
+        2,
+        -1
     );
 }
 
@@ -26,7 +27,8 @@ export function PoisonStatus(sourceFlowerId, duration = 5) {
                 flower.baseStylePoints - 2
             );
         },
-        1
+        1,
+        -1
     );
 }
 
@@ -39,6 +41,7 @@ export function StunStatus(sourceFlowerId, duration = 3) {
             flower.specialChance = 0;
             game.log(`${flower.name} #${flower.flowerId} is stunned; it can't apply its special effect!`);
         },
+        1,
         1
     );
 }
