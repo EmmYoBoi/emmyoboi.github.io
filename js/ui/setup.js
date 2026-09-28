@@ -60,6 +60,9 @@ export async function setupGame() {
     );
 
 
+    let targetStylePoints = 1000;
+
+
     setupContent.innerHTML = `
 
         <div style="text-align:center">
@@ -79,6 +82,25 @@ export async function setupGame() {
                 selected multiple times.
             </p>
 
+            <div style="margin: 20px 0;">
+                <label for="gameTypeSlider" style="display: block; margin-bottom: 10px; font-weight: bold;">
+                    Game Type: <span id="gameTypeValue">1000</span> SP
+                </label>
+                <input
+                    type="range"
+                    id="gameTypeSlider"
+                    min="500"
+                    max="2000"
+                    step="100"
+                    value="1000"
+                    style="width: 100%; cursor: pointer;"
+                >
+                <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 12px; color: #666;">
+                    <span>500 SP</span>
+                    <span>2000 SP</span>
+                </div>
+            </div>
+
             <button
                 class="action primary"
                 id="beginSetup"
@@ -89,6 +111,34 @@ export async function setupGame() {
         </div>
 
     `;
+
+
+    const slider =
+        document.getElementById(
+            "gameTypeSlider"
+        );
+
+
+    const valueDisplay =
+        document.getElementById(
+            "gameTypeValue"
+        );
+
+
+    slider.addEventListener(
+        "input",
+        event => {
+
+            targetStylePoints =
+                parseInt(
+                    event.target.value
+                );
+
+            valueDisplay.textContent =
+                targetStylePoints;
+
+        }
+    );
 
 
     await new Promise(
@@ -122,10 +172,16 @@ export async function setupGame() {
     );
 
 
-    return [
-        player1,
-        player2
-    ];
+    return {
+
+        players: [
+            player1,
+            player2
+        ],
+
+        targetStylePoints
+
+    };
 
 }
 
